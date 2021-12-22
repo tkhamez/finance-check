@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!--suppress HtmlUnknownTarget -->
+<div class="login">
+    <a href="{{ url_for('auth_redirect') }}">
+        <img src="{{ url_for('static', filename='eve-sso-login-black-large.png') }}" alt="Login">
+    </a>
+</div>
+
+{% endblock %}

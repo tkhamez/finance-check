@@ -1,0 +1,16 @@
+# /etc/systemd/system/finance-check.service
+
+[Unit]
+Description=uWSGI instance to serve finance-check
+After=network.target
+
+[Service]
+EnvironmentFile=/home/ubuntu/.finance-check.conf
+User=ubuntu
+Group=www-data
+WorkingDirectory=/opt/finance-check/web
+Environment="PATH=/opt/finance-check/venv/bin"
+ExecStart=/opt/finance-check/venv/bin/uwsgi --ini ../config/app.ini
+
+[Install]
+WantedBy=multi-user.target

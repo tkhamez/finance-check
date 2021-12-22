@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!--suppress HtmlUnknownTarget -->
+<!--suppress HtmlUnknownAttribute -->
+<div class="index">
+
+    <div>
+        <form action="{{ url_for('index') }}">
+            <label>
+                Mode:
+                <select name="mode">
+                    <option value="details" {% if params.mode == 'details' %}selected{% endif %}>
+                        Details (one corporation, one month)
+                    </option>
+                    <option value="sum_month" {% if params.mode == 'sum_month' %}selected{% endif %}>
+                        Sum per month (one corporation)
+                    </option>
+                    <option value="sum_corporation" {% if params.mode == 'sum_corporation' %}selected{% endif %}>
+                        Sum per corporation (one month)
+                    </option>
+                </select>,
+            </label>
+            <label>
+                Corporation:
+                <select name="corporation">
+                    <option></option>
+                    {% for corporation in corporations %}
+                        <option value="{{ corporation.id }}"
+                                {% if params.corporation == corporation.id %}selected{% endif %}>
+                            {{ corporation.corporation_name }}
+                            &nbsp; - &nbsp;
+                            {{ corporation.last_journal_date }}
+                        </option>
+                    {% endfor %}
+                </select>,
+            </label>
+            Types:
+            <label>
+                <input name="type_bounty" type="checkbox" value="1"
+                       {% if params.type_bounty == '1' %}checked{% endif %}>
+                bounty
+            </label>
+            <label>
+                <input name="type_mission_reward" type="checkbox" value="1"
+                       {% if params.type_mission_reward == '1' %}checked{% endif %}>
+                mission_reward,
+            </label>
+            <label>
+                Year:
+                <select name="year">
+                    {% for year_option in range(2021, current_year+1) %}
+                        <option value="{{ year_option }}" {% if params.year == year_option %}selected{% endif %}>
+                            {{ year_option }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Month:
+                <select name="month">
+                    {% for month_num, month_name in [(1, 'Jan.'), (2, 'Feb.'), (3, 'Mar.'), (4, 'Apr.'), (5, 'May'),
+                                                     (6, 'June'), (7, 'July'), (8, 'Aug.'), (9, 'Sept.'), (10, 'Oct.'),
+                                                     (11, 'Nov.'), (12, 'Dec.')] %}
+                        <option value="{{ month_num }}" {% if params.month == month_num %}selected{% endif %}>
+                            {{ month_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <br>
+
+    {% if params.mode == 'details' %}
+        <table>
+            <thead>
+                <tr>
+                    <td>ref_type</td>
+                    <td>journal_date</td>
+                    <td>description</td>
+                    <td>amount</td>
+                    <td>reason</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="number">{{ '{:,}'.format(sum_amount) }} </td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in journal %}
+                    <tr>
+                        <td>{{ entry.ref_type }}</td>
+                        <td>{{ entry.journal_date }}</td>
+                        <td>{{ entry.description }}</td>
+                        <td class="number">{{ '{:,}'.format(entry.amount) }} </td>
+                        <td>{{ entry.reason }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if params.mode == 'sum_month' %}
+        <table>
+            <thead>
+                <tr>
+                    <td>year</td>
+                    <td>month</td>
+                    <td>amount</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="number">{{ '{:,}'.format(sum_amount) }} </td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in journal %}
+                    <tr>
+                        <td>{{ entry.year }}</td>
+                        <td>{{ entry.month }}</td>
+                        <td class="number">{{ '{:,}'.format(entry.amount) }} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if params.mode == 'sum_corporation' %}
+    <table>
+        <thead>
+            <tr>
+                <td>corporation</td>
+                <td>amount</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="number">{{ '{:,}'.format(sum_amount) }} </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in journal %}
+                <tr>
+                    <td>{{ entry.corporation_name }}</td>
+                    <td class="number">{{ '{:,}'.format(entry.amount) }} </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+{% endblock %}
