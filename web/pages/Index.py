@@ -30,7 +30,16 @@ class Index:
             'year': self.__int(request.args.get('year', current_year)),
             'month': self.__int(request.args.get('month', datetime.datetime.now().month)),
             'type_bounty': request.args.get('type_bounty', '0'),
+            'type_ess_escrow': request.args.get('type_ess_escrow', '0'),
             'type_mission_reward': request.args.get('type_mission_reward', '0'),
+            'type_corporate_reward': request.args.get('type_corporate_reward', '0'),
+            'type_brokers_fee': request.args.get('type_brokers_fee', '0'),
+            'type_jump_clone': request.args.get('type_jump_clone', '0'),
+            'type_reprocessing': request.args.get('type_reprocessing', '0'),
+            'type_industry_job': request.args.get('type_industry_job', '0'),
+            'type_planetary': request.args.get('type_planetary', '0'),
+            'type_office_rental': request.args.get('type_office_rental', '0'),
+            'type_project_discovery': request.args.get('type_project_discovery', '0'),
         }
 
         # ref types
@@ -39,10 +48,41 @@ class Index:
         if query_params['type_bounty'] == '1':
             types.append('bounty_prizes')
             types_placeholder.append('%s')
+        if query_params['type_ess_escrow'] == '1':
+            types.append('ess_escrow_transfer')
+            types_placeholder.append('%s')
         if query_params['type_mission_reward'] == '1':
             types.append('agent_mission_reward')
             types.append('agent_mission_time_bonus_reward')
             types_placeholder.append('%s')
+            types_placeholder.append('%s')
+        if query_params['type_corporate_reward'] == '1':
+            types.append('corporate_reward_payout')
+            types_placeholder.append('%s')
+        if query_params['type_brokers_fee'] == '1':
+            types.append('brokers_fee')
+            types_placeholder.append('%s')
+        if query_params['type_jump_clone'] == '1':
+            types.append('jump_clone_activation_fee')
+            types.append('jump_clone_installation_fee')
+            types_placeholder.append('%s')
+            types_placeholder.append('%s')
+        if query_params['type_reprocessing'] == '1':
+            types.append('reprocessing_tax')
+            types_placeholder.append('%s')
+        if query_params['type_industry_job'] == '1':
+            types.append('industry_job_tax')
+            types_placeholder.append('%s')
+        if query_params['type_planetary'] == '1':
+            types.append('planetary_export_tax')
+            types.append('planetary_import_tax')
+            types_placeholder.append('%s')
+            types_placeholder.append('%s')
+        if query_params['type_office_rental'] == '1':
+            types.append('office_rental_fee')
+            types_placeholder.append('%s')
+        if query_params['type_project_discovery'] == '1':
+            types.append('project_discovery_reward')
             types_placeholder.append('%s')
 
         # journal date range

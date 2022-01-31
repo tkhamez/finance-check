@@ -72,7 +72,16 @@ class FetchWallet:
         first_journal_date = '9999-99-99 99:99:99'
         last_journal_date = ''
         for entry in json:
-            if entry['ref_type'] not in ['bounty_prizes', 'agent_mission_reward', 'agent_mission_time_bonus_reward']:
+            # see also https://github.com/esi/eve-glue/blob/master/eve_glue/wallet_journal_ref.py
+            if entry['ref_type'] not in [
+                    'bounty_prizes', 'ess_escrow_transfer',
+                    'agent_mission_reward', 'agent_mission_time_bonus_reward', 'corporate_reward_payout',
+                    'brokers_fee', 'jump_clone_activation_fee', 'jump_clone_installation_fee',
+                    'reprocessing_tax', 'industry_job_tax',
+                    'planetary_import_tax', 'planetary_export_tax',
+                    'office_rental_fee',  # in and out
+                    'project_discovery_reward']:
+                # print(entry['ref_type'] + ' ' + str(entry.get('amount', '')))
                 continue
 
             journal_date = entry['date'].replace('T', ' ').replace('Z', '')

@@ -60,9 +60,13 @@ pip install -r requirements.txt
 
 Dev:
 ```
+. venv/bin/activate
+
 export FLASK_ENV=development
 export FLASK_APP=web/app:app
 flask run
+
+python console/fetch-wallets.py
 ```
 
 Prod:  

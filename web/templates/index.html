@@ -36,17 +36,70 @@
                     {% endfor %}
                 </select>,
             </label>
-            Types:
-            <label>
-                <input name="type_bounty" type="checkbox" value="1"
-                       {% if params.type_bounty == '1' %}checked{% endif %}>
-                bounty
-            </label>
-            <label>
-                <input name="type_mission_reward" type="checkbox" value="1"
-                       {% if params.type_mission_reward == '1' %}checked{% endif %}>
-                mission_reward,
-            </label>
+            <div class="filter-types">
+                Types:
+                <label>
+                    <input name="type_bounty" type="checkbox" value="1"
+                           {% if params.type_bounty == '1' %}checked{% endif %}>
+                    bounty
+                </label>
+                <label>
+                    <input name="type_ess_escrow" type="checkbox" value="1"
+                           {% if params.type_ess_escrow == '1' %}checked{% endif %}>
+                    ess escrow
+                </label>
+                <br>
+                <label>
+                    <input name="type_mission_reward" type="checkbox" value="1"
+                           {% if params.type_mission_reward == '1' %}checked{% endif %}>
+                    mission reward
+                </label>
+                <label>
+                    <input name="type_corporate_reward" type="checkbox" value="1"
+                           {% if params.type_corporate_reward == '1' %}checked{% endif %}>
+                    corporate reward
+                </label>
+                <br>
+                <label>
+                    <input name="type_brokers_fee" type="checkbox" value="1"
+                           {% if params.type_brokers_fee == '1' %}checked{% endif %}>
+                    brokers fee (in and out)
+                </label>
+                <label>
+                    <input name="type_jump_clone" type="checkbox" value="1"
+                           {% if params.type_jump_clone == '1' %}checked{% endif %}>
+                    jump clone fees
+                </label>
+                <br>
+                <label>
+                    <input name="type_reprocessing" type="checkbox" value="1"
+                           {% if params.type_reprocessing == '1' %}checked{% endif %}>
+                    reprocessing
+                </label>
+                <label>
+                    <input name="type_industry_job" type="checkbox" value="1"
+                           {% if params.type_industry_job == '1' %}checked{% endif %}>
+                    industry job
+                </label>
+                <br>
+                <label>
+                    <input name="type_planetary" type="checkbox" value="1"
+                           {% if params.type_planetary == '1' %}checked{% endif %}>
+                    planetary import/export
+                </label>
+                <br>
+                <label>
+                    <input name="type_office_rental" type="checkbox" value="1"
+                           {% if params.type_office_rental == '1' %}checked{% endif %}>
+                    office rental (in and out)
+                </label>
+                <br>
+                <label>
+                    <input name="type_project_discovery" type="checkbox" value="1"
+                           {% if params.type_project_discovery == '1' %}checked{% endif %}>
+                    project discovery,
+                </label>
+            </div>
             <label>
                 Year:
                 <select name="year">

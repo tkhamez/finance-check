@@ -36,3 +36,7 @@ a {
 .index td.number {
     text-align: right;
 }
+
+.index .filter-types {
+    display: inline-block;
+}
