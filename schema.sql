@@ -12,7 +12,7 @@ create table wallet_journal
     context_id_type varchar(128)    null,
     context_id      bigint unsigned null,
     constraint wallet_journal_id_unique    unique (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 create index wallet_journal_corporation_id_index on wallet_journal (corporation_id);
 create index wallet_journal_date_index on wallet_journal (journal_date);
 create index wallet_journal_ref_type_index on wallet_journal (ref_type);
@@ -25,4 +25,4 @@ create table corporations
     last_journal_date datetime          null,
     active            tinyint default 1 null,
     constraint corporations_id_unique   unique (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
