@@ -61,14 +61,16 @@ class Auth:
                 access_token,
                 jwk_set,
                 algorithms=jwk_set["alg"],
-                issuer="login.eveonline.com"
+                issuer="login.eveonline.com",
+                options={"verify_aud": False}
             )
         except JWTClaimsError:
             data = jwt.decode(
                 access_token,
                 jwk_set,
                 algorithms=jwk_set["alg"],
-                issuer="https://login.eveonline.com"
+                issuer="https://login.eveonline.com",
+                options={"verify_aud": False}
             )
 
         return data['sub'].replace('CHARACTER:EVE:', '')
