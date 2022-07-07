@@ -16,6 +16,7 @@ create table wallet_journal
 create index wallet_journal_corporation_id_index on wallet_journal (corporation_id);
 create index wallet_journal_date_index on wallet_journal (journal_date);
 create index wallet_journal_ref_type_index on wallet_journal (ref_type);
+create index wallet_journal_ref_amount_index on wallet_journal (amount);
 
 create table corporations
 (

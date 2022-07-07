@@ -98,9 +98,13 @@ class Index:
         elif query_params['mode'] == 'sum_corporation':
             journal = self.__fetch_sum_corporation(date_from, date_to, types, types_placeholder)
 
-        sum_amount = 0
+        sum_amount_in = 0
+        sum_amount_out = 0
         for entry in journal:
-            sum_amount += entry['amount']
+            if entry['amount_in']:
+                sum_amount_in += entry['amount_in']
+            if entry['amount_out']:
+                sum_amount_out += entry['amount_out']
 
         # fetch corporations
         cursor = self.__db.cursor(dictionary=True)
@@ -112,14 +116,17 @@ class Index:
         self.__db.close()
 
         return render_template('index.html', character_id=session['character_id'], current_year=current_year,
-                               params=query_params, corporations=corporations, journal=journal, sum_amount=sum_amount)
+                               params=query_params, corporations=corporations, journal=journal,
+                               sum_amount_in=sum_amount_in, sum_amount_out=sum_amount_out)
 
     def __fetch_details(self, corporation: int, date_from: datetime, date_to: datetime, types: [],
                         types_placeholder: []) -> []:
         journal = []
         if len(types) > 0:
             cursor = self.__db.cursor(dictionary=True)
-            cursor.execute("SELECT ref_type, journal_date, description, amount, reason "
+            cursor.execute("SELECT ref_type, journal_date, description, reason, "
+                           "    CASE WHEN amount >= 0 THEN amount END AS amount_in, "
+                           "    CASE WHEN amount < 0 THEN amount END AS amount_out "
                            "FROM wallet_journal "
                            "WHERE corporation_id = %s AND journal_date BETWEEN %s AND %s AND ref_type IN ({}) "
                            "ORDER BY journal_date DESC".format(', '.join(types_placeholder)),
@@ -133,10 +140,12 @@ class Index:
         journal = []
         if len(types) > 0:
             cursor = self.__db.cursor(dictionary=True)
-            cursor.execute("SELECT SUM(amount) AS amount, YEAR(journal_date) AS year, MONTH(journal_date) AS month "
+            cursor.execute("SELECT YEAR(journal_date) AS year, MONTH(journal_date) AS month, "
+                           "    SUM(CASE WHEN amount >= 0 THEN amount ELSE 0 END) AS amount_in, "
+                           "    SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS amount_out "
                            "FROM wallet_journal "
                            "WHERE corporation_id = %s AND ref_type IN ({}) "
-                           "GROUP BY YEAR(journal_date), MONTH(journal_date)"
+                           "GROUP BY YEAR(journal_date), MONTH(journal_date) "
                            "ORDER BY YEAR(journal_date) DESC, MONTH(journal_date) DESC"
                            .format(', '.join(types_placeholder)),
                            [corporation] + types)
@@ -148,7 +157,9 @@ class Index:
         journal = []
         if len(types) > 0:
             cursor = self.__db.cursor(dictionary=True)
-            cursor.execute("SELECT w.corporation_id, SUM(w.amount) as amount, c.corporation_name "
+            cursor.execute("SELECT w.corporation_id, c.corporation_name, "
+                           "    SUM(CASE WHEN w.amount >= 0 THEN w.amount ELSE 0 END) AS amount_in, "
+                           "    SUM(CASE WHEN w.amount < 0 THEN w.amount ELSE 0 END) AS amount_out "
                            "FROM wallet_journal w "
                            "LEFT JOIN corporations c ON w.corporation_id = c.id "
                            "WHERE w.journal_date BETWEEN %s AND %s AND w.ref_type IN ({}) "

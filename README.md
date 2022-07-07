@@ -64,6 +64,9 @@ Dev:
 
 export FLASK_ENV=development
 export FLASK_APP=web/app:app
+
+# export other env vars
+
 flask run
 
 python console/fetch-wallets.py
@@ -75,3 +78,9 @@ The server can also be temporarily started with:
 ```
 uwsgi --http 127.0.0.1:5000 --chdir web --module app:app
 ```
+
+## Changes
+
+2022-07-07
+
+- Added index to wallet_journal.amount.
