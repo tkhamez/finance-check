@@ -1,5 +1,7 @@
 import calendar
+import csv
 import datetime
+import io
 import os
 from typing import Union
 
@@ -97,10 +99,10 @@ class Index:
         journal = []
         if query_params['mode'] == 'details':
             journal = self.__fetch_details(query_params['corporation'], date_from, date_to, types, types_placeholder)
-        elif query_params['mode'] == 'sum_month':
-            journal = self.__fetch_sum_month(query_params['corporation'], types, types_placeholder)
-        elif query_params['mode'] == 'sum_corporation':
-            journal = self.__fetch_sum_corporation(date_from, date_to, types, types_placeholder)
+        elif query_params['mode'] == 'sum_months':
+            journal = self.__fetch_sum_months(query_params['corporation'], types, types_placeholder)
+        elif query_params['mode'] == 'sum_corporations':
+            journal = self.__fetch_sum_corporations(date_from, date_to, types, types_placeholder)
 
         sum_amount_in = 0
         sum_amount_out = 0
@@ -119,9 +121,24 @@ class Index:
 
         self.__db.close()
 
-        return render_template('index.html', character_id=session['character_id'], current_year=current_year,
-                               params=query_params, corporations=corporations, journal=journal,
-                               sum_amount_in=sum_amount_in, sum_amount_out=sum_amount_out)
+        if request.args.get('export', '0') == '1':
+            if query_params['mode'] == 'details':
+                filename = "{}-{}-{:02d}-{}".format(query_params['mode'], query_params['year'], query_params['month'],
+                                                    query_params['corporation'])
+            elif query_params['mode'] == 'sum_months':
+                filename = "{}-{}".format(query_params['mode'], query_params['corporation'])
+            else:  # sum_corporations
+                filename = "{}-{}-{:02d}".format(query_params['mode'], query_params['year'], query_params['month'])
+
+            return Response(
+                self.__create_csv(params=query_params, journal=journal),
+                mimetype='text/csv',
+                headers={'Content-disposition': 'attachment; filename=' + filename + '.csv'}
+            )
+        else:
+            return render_template('index.html', character_id=session['character_id'], current_year=current_year,
+                                   params=query_params, corporations=corporations, journal=journal,
+                                   sum_amount_in=sum_amount_in, sum_amount_out=sum_amount_out)
 
     def __fetch_details(self, corporation: int, date_from: datetime, date_to: datetime, types: [],
                         types_placeholder: []) -> []:
@@ -140,7 +157,7 @@ class Index:
             cursor.close()
         return journal
 
-    def __fetch_sum_month(self, corporation: int, types: [], types_placeholder: []) -> []:
+    def __fetch_sum_months(self, corporation: int, types: [], types_placeholder: []) -> []:
         journal = []
         if len(types) > 0:
             cursor = self.__db.cursor(dictionary=True)
@@ -157,7 +174,7 @@ class Index:
             cursor.close()
         return journal
 
-    def __fetch_sum_corporation(self, date_from: datetime, date_to: datetime, types: [], types_placeholder: []) -> []:
+    def __fetch_sum_corporations(self, date_from: datetime, date_to: datetime, types: [], types_placeholder: []) -> []:
         journal = []
         if len(types) > 0:
             cursor = self.__db.cursor(dictionary=True)
@@ -173,6 +190,29 @@ class Index:
             journal = cursor.fetchall()
             cursor.close()
         return journal
+
+    @staticmethod
+    def __create_csv(params: {}, journal: []) -> str:
+        output = io.StringIO()
+        writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
+
+        if params['mode'] == 'details':
+            writer.writerow(['ref_type', 'journal_date', 'description', 'amount in', 'amount out', 'reason'])
+            for entry in journal:
+                writer.writerow([entry['ref_type'], entry['journal_date'], entry['description'], entry['amount_in'],
+                                 entry['amount_out'], entry['reason']])
+
+        if params['mode'] == 'sum_months':
+            writer.writerow(['year', 'month', 'amount in', 'amount out'])
+            for entry in journal:
+                writer.writerow([entry['year'], entry['month'], entry['amount_in'], entry['amount_out']])
+
+        if params['mode'] == 'sum_corporations':
+            writer.writerow(['corporation', 'amount in', 'amount out'])
+            for entry in journal:
+                writer.writerow([entry['corporation_name'], entry['amount_in'], entry['amount_out']])
+
+        return output.getvalue()
 
     @staticmethod
     def __int(s) -> int:

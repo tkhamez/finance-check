@@ -7,7 +7,7 @@
 <div class="index">
 
     <div>
-        <form action="{{ url_for('index') }}">
+        <form id="indexForm" action="{{ url_for('index') }}">
             <div class="column">
                 <label>
                     Mode: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -15,10 +15,10 @@
                         <option value="details" {% if params.mode == 'details' %}selected{% endif %}>
                             Details (one corporation, one month)
                         </option>
-                        <option value="sum_month" {% if params.mode == 'sum_month' %}selected{% endif %}>
+                        <option value="sum_months" {% if params.mode == 'sum_months' %}selected{% endif %}>
                             Sum per month (one corporation)
                         </option>
-                        <option value="sum_corporation" {% if params.mode == 'sum_corporation' %}selected{% endif %}>
+                        <option value="sum_corporations" {% if params.mode == 'sum_corporations' %}selected{% endif %}>
                             Sum per corporation (one month)
                         </option>
                     </select>
@@ -136,7 +136,11 @@
                 </label>
             </div>
 
-            <input type="submit" value="Submit">
+            <div class="column">
+                <input id="indexFormExport" type="hidden" name="export" value="0">
+                <input type="submit" value="Show" onclick="showData();">
+                <input type="submit" value="Export" onclick="exportData();">
+            </div>
         </form>
     </div>
 
@@ -181,7 +185,7 @@
         </table>
     {% endif %}
 
-    {% if params.mode == 'sum_month' %}
+    {% if params.mode == 'sum_months' %}
         <table>
             <thead>
                 <tr>
@@ -214,7 +218,7 @@
         </table>
     {% endif %}
 
-    {% if params.mode == 'sum_corporation' %}
+    {% if params.mode == 'sum_corporations' %}
     <table>
         <thead>
             <tr>
@@ -240,5 +244,17 @@
     </table>
     {% endif %}
 </div>
+
+<script type="text/javascript">
+    function exportData() {
+        document.getElementById('indexFormExport').value = 1;
+        document.getElementById('indexForm').target = '__blank';
+    }
+
+    function showData() {
+        document.getElementById('indexFormExport').value = 0;
+        document.getElementById('indexForm').target = '';
+    }
+</script>
 
 {% endblock %}
