@@ -35,6 +35,7 @@ class Index:
             'type_corporate_reward': request.args.get('type_corporate_reward', '0'),
             'type_brokers_fee': request.args.get('type_brokers_fee', '0'),
             'type_jump_clone': request.args.get('type_jump_clone', '0'),
+            'type_structure_gate_jump': request.args.get('type_structure_gate_jump', '0'),
             'type_reprocessing': request.args.get('type_reprocessing', '0'),
             'type_industry_job': request.args.get('type_industry_job', '0'),
             'type_planetary': request.args.get('type_planetary', '0'),
@@ -66,6 +67,9 @@ class Index:
             types.append('jump_clone_activation_fee')
             types.append('jump_clone_installation_fee')
             types_placeholder.append('%s')
+            types_placeholder.append('%s')
+        if query_params['type_structure_gate_jump'] == '1':
+            types.append('structure_gate_jump')
             types_placeholder.append('%s')
         if query_params['type_reprocessing'] == '1':
             types.append('reprocessing_tax')
