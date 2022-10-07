@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="tokens">
+
+    {% for alliance_id in want_corporations: %}
+        <h4>
+            {% if alliance_id %}
+                Corporations in Alliance
+                <a href="https://evewho.com/alliance/{{ alliance_id }}" target="_blank" rel="noopener noreferrer"
+                    title="EveWho">{{ alliance_id }}</a>
+            {% else %}
+                Other Corporations
+            {% endif %}
+
+        </h4>
+        <table class="list">
+            <thead>
+                <tr>
+                    <th colspan="2">WANT</th>
+                    <th colspan="3">HAVE</th>
+                    <th colspan="3">AVAILABLE (valid tokens only)</th>
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>Name</td>
+
+                    <td>Character ID</td>
+                    <td>Last Journal Date</td>
+                    <td>Active</td>
+
+                    <td>Character ID</td>
+                    <td>Character Name</td>
+                    <td>Last Checked</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for corporation_id in want_corporations[alliance_id]: %}
+                    {% set corporation = find_have_corporation(corporation_id) %}
+                    {% set tokens = find_available_tokens(corporation_id) %}
+                    <tr>
+                        <td>
+                            <a href="https://evewho.com/corporation/{{ corporation_id }}" target="_blank"
+                               rel="noopener noreferrer" title="EveWho">{{ corporation_id }}</a>
+                        </td>
+                        <td>{{ find_corporation_name(corporation_id) }}</td>
+
+                        <td>
+                            <a href="https://evewho.com/character/{{ corporation.character_id }}" target="_blank"
+                               rel="noopener noreferrer" title="EveWho">{{ corporation.character_id }}</a>
+                        </td>
+                        <td>{% if corporation.last_journal_date %} {{ corporation.last_journal_date }} {% endif %}</td>
+                        <td>{{ corporation.active }}</td>
+
+                        <td>{% for token in tokens: %} {{ token.characterId }}<br> {% endfor %}</td>
+                        <td>{% for token in tokens: %} {{ token.characterName }}<br> {% endfor %}</td>
+                        <td>
+                            {% for token in tokens: %}
+                                {% if token.lastChecked %}
+                                    {{ token.lastChecked.replace('T', ' ').replace('Z', '') }}
+                                {% endif %}
+                                <br>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

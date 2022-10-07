@@ -12,13 +12,18 @@
                 <label>
                     Mode: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                     <select name="mode">
-                        <option value="details" {% if params.mode == 'details' %}selected{% endif %}>
+                        {% if params.mode == 'details' %} {% set selected_details = 'selected' %} {% endif %}
+                        <option value="details" {{ selected_details }}>
                             Details (one corporation, one month)
                         </option>
-                        <option value="sum_months" {% if params.mode == 'sum_months' %}selected{% endif %}>
+                        {% if params.mode == 'sum_months' %} {% set selected_sum_months = 'selected' %} {% endif %}
+                        <option value="sum_months" {{ selected_sum_months }}>
                             Sum per month (one corporation)
                         </option>
-                        <option value="sum_corporations" {% if params.mode == 'sum_corporations' %}selected{% endif %}>
+                        {% if params.mode == 'sum_corporations' %}
+                            {% set selected_sum_corporations = 'selected' %}
+                        {% endif %}
+                        <option value="sum_corporations" {{ selected_sum_corporations }}>
                             Sum per corporation (one month)
                         </option>
                     </select>
@@ -43,69 +48,75 @@
             <div class="column">
                 Types:<br>
                 <label>
-                    <input name="type_bounty" type="checkbox" value="1"
-                           {% if params.type_bounty == '1' %}checked{% endif %}>
+                    {% if params.type_bounty == '1' %} {% set checked_bounty = 'checked' %} {% endif %}
+                    <input name="type_bounty" type="checkbox" value="1" {{ checked_bounty }}>
                     bounty
                 </label>
                 <label>
-                    <input name="type_ess_escrow" type="checkbox" value="1"
-                           {% if params.type_ess_escrow == '1' %}checked{% endif %}>
+                    {% if params.type_ess_escrow == '1' %} {% set checked_ess_escrow = 'checked' %} {% endif %}
+                    <input name="type_ess_escrow" type="checkbox" value="1" {{ checked_ess_escrow }}>
                     ess escrow
                 </label>
                 <br>
                 <label>
-                    <input name="type_mission_reward" type="checkbox" value="1"
-                           {% if params.type_mission_reward == '1' %}checked{% endif %}>
+                    {% if params.type_mission_reward == '1' %} {% set checked_mission_reward = 'checked' %} {% endif %}
+                    <input name="type_mission_reward" type="checkbox" value="1" {{ checked_mission_reward }}>
                     mission reward
                 </label>
                 <label>
-                    <input name="type_corporate_reward" type="checkbox" value="1"
-                           {% if params.type_corporate_reward == '1' %}checked{% endif %}>
+                    {% if params.type_corporate_reward == '1' %}
+                        {% set checked_corporate_reward = 'checked' %}
+                    {% endif %}
+                    <input name="type_corporate_reward" type="checkbox" value="1" {{ checked_corporate_reward }}>
                     corporate reward
                 </label>
                 <br>
                 <label>
-                    <input name="type_brokers_fee" type="checkbox" value="1"
-                           {% if params.type_brokers_fee == '1' %}checked{% endif %}>
+                    {% if params.type_brokers_fee == '1' %} {% set checked_brokers_fee = 'checked' %} {% endif %}
+                    <input name="type_brokers_fee" type="checkbox" value="1" {{ checked_brokers_fee }}>
                     brokers fee
                 </label>
                 <br>
                 <label>
-                    <input name="type_jump_clone" type="checkbox" value="1"
-                           {% if params.type_jump_clone == '1' %}checked{% endif %}>
+                    {% if params.type_jump_clone == '1' %} {% set checked_jump_clone = 'checked' %} {% endif %}
+                    <input name="type_jump_clone" type="checkbox" value="1" {{ checked_jump_clone }}>
                     jump clone fees
                 </label>
                 <label>
-                    <input name="type_structure_gate_jump" type="checkbox" value="1"
-                           {% if params.type_structure_gate_jump == '1' %}checked{% endif %}>
+                    {% if params.type_structure_gate_jump == '1' %}
+                        {% set checked_structure_gate_jump = 'checked' %}
+                    {% endif %}
+                    <input name="type_structure_gate_jump" type="checkbox" value="1" {{ checked_structure_gate_jump }}>
                     structure gate jump
                 </label>
                 <br>
                 <label>
-                    <input name="type_reprocessing" type="checkbox" value="1"
-                           {% if params.type_reprocessing == '1' %}checked{% endif %}>
+                    {% if params.type_reprocessing == '1' %} {% set checked_reprocessing = 'checked' %} {% endif %}
+                    <input name="type_reprocessing" type="checkbox" value="1" {{ checked_reprocessing }}>
                     reprocessing
                 </label>
                 <label>
-                    <input name="type_industry_job" type="checkbox" value="1"
-                           {% if params.type_industry_job == '1' %}checked{% endif %}>
+                    {% if params.type_industry_job == '1' %} {% set checked_industry_job = 'checked' %} {% endif %}
+                    <input name="type_industry_job" type="checkbox" value="1" {{ checked_industry_job }}>
                     industry job
                 </label>
                 <br>
                 <label>
-                    <input name="type_planetary" type="checkbox" value="1"
-                           {% if params.type_planetary == '1' %}checked{% endif %}>
+                    {% if params.type_planetary == '1' %} {% set checked_planetary = 'checked' %} {% endif %}
+                    <input name="type_planetary" type="checkbox" value="1" {{ checked_planetary }}>
                     planetary import/export
                 </label>
                 <br>
                 <label>
-                    <input name="type_office_rental" type="checkbox" value="1"
-                           {% if params.type_office_rental == '1' %}checked{% endif %}>
+                    {% if params.type_office_rental == '1' %} {% set checked_office_rental = 'checked' %} {% endif %}
+                    <input name="type_office_rental" type="checkbox" value="1" {{ checked_office_rental }}>
                     office rental
                 </label>
                 <label>
-                    <input name="type_project_discovery" type="checkbox" value="1"
-                           {% if params.type_project_discovery == '1' %}checked{% endif %}>
+                    {% if params.type_project_discovery == '1' %}
+                        {% set checked_project_discovery = 'checked' %}
+                    {% endif %}
+                    <input name="type_project_discovery" type="checkbox" value="1" {{ checked_project_discovery }}>
                     project discovery
                 </label>
             </div>
@@ -147,23 +158,23 @@
     <br>
 
     {% if params.mode == 'details' %}
-        <table>
+        <table class="list">
             <thead>
                 <tr>
-                    <td>ref_type</td>
-                    <td>journal_date</td>
-                    <td>description</td>
-                    <td>amount in</td>
-                    <td>amount out</td>
-                    <td>reason</td>
+                    <th>ref_type</th>
+                    <th>journal_date</th>
+                    <th>description</th>
+                    <th>amount in</th>
+                    <th>amount out</th>
+                    <th>reason</th>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="number">{{ '{:,}'.format(sum_amount_in) }} </td>
-                    <td class="number">{{ '{:,}'.format(sum_amount_out) }} </td>
-                    <td></td>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class="number">{{ '{:,}'.format(sum_amount_in) }} </th>
+                    <th class="number">{{ '{:,}'.format(sum_amount_out) }} </th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -186,19 +197,19 @@
     {% endif %}
 
     {% if params.mode == 'sum_months' %}
-        <table>
+        <table class="list">
             <thead>
                 <tr>
-                    <td>year</td>
-                    <td>month</td>
-                    <td>amount in</td>
-                    <td>amount out</td>
+                    <th>year</th>
+                    <th>month</th>
+                    <th>amount in</th>
+                    <th>amount out</th>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td class="number">{{ '{:,}'.format(sum_amount_in) }} </td>
-                    <td class="number">{{ '{:,}'.format(sum_amount_out) }} </td>
+                    <th></th>
+                    <th></th>
+                    <th class="number">{{ '{:,}'.format(sum_amount_in) }} </th>
+                    <th class="number">{{ '{:,}'.format(sum_amount_out) }} </th>
                 </tr>
             </thead>
             <tbody>
@@ -219,29 +230,29 @@
     {% endif %}
 
     {% if params.mode == 'sum_corporations' %}
-    <table>
-        <thead>
-            <tr>
-                <td>corporation</td>
-                <td>amount in</td>
-                <td>amount out</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td class="number">{{ '{:,}'.format(sum_amount_in) }} </td>
-                <td class="number">{{ '{:,}'.format(sum_amount_out) }} </td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for entry in journal %}
+        <table class="list">
+            <thead>
                 <tr>
-                    <td>{{ entry.corporation_name }}</td>
-                    <td class="number">{% if entry.amount_in %}{{ '{:,}'.format(entry.amount_in) }}{% endif %}</td>
-                    <td class="number">{% if entry.amount_out %}{{ '{:,}'.format(entry.amount_out) }}{% endif %}</td>
+                    <th>corporation</th>
+                    <th>amount in</th>
+                    <th>amount out</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                <tr>
+                    <th></th>
+                    <th class="number">{{ '{:,}'.format(sum_amount_in) }} </th>
+                    <th class="number">{{ '{:,}'.format(sum_amount_out) }} </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in journal %}
+                    <tr>
+                        <td>{{ entry.corporation_name }}</td>
+                        <td class="number">{% if entry.amount_in %}{{ '{:,}'.format(entry.amount_in) }}{% endif %}</td>
+                        <td class="number">{% if entry.amount_out %}{{ '{:,}'.format(entry.amount_out) }}{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 </div>
 

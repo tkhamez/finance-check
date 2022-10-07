@@ -9,14 +9,22 @@
 <body>
     <header class="head">
         <div>Brave Collective - Finance Check</div>
-        <div>
-            {{ character_id }}
-            {% if character_id %}
+
+        {% if character_id %}
+            <div>
+                <a href="/">Home</a>
+                <a href="/tokens">Tokens</a>
+            </div>
+        {% endif %}
+
+        {% if character_id %}
+            <div>
+                {{ character_id }}
                 <form action="{{ url_for('auth_logout') }}">
                     <button>Logout</button>
                 </form>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </header>
 
     {% block content %}{% endblock %}

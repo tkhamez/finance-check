@@ -44,6 +44,8 @@ Environment variables:
 - EVE_APP_ID=
 - EVE_APP_SECRET=
 - EVE_APP_CALLBACK=https://your-domain.tld/auth/callback
+- CHECK_ALLIANCES=99003214,99010079
+- CHECK_CORPORATIONS=2116994376
 - LOGIN_CHARACTERS=96061222,98169165 # EVE character IDs that are allowed to log in
 - Optional for dev env if HTTPS is not available: OAUTHLIB_INSECURE_TRANSPORT=1
 
@@ -81,6 +83,8 @@ uwsgi --http 127.0.0.1:5000 --chdir web --module app:app
 
 ## Changes
 
-2022-07-07
+2022-10-07
+- Added CHECK_ALLIANCES and CHECK_CORPORATIONS environment variables
 
+2022-07-07
 - Added index to wallet_journal.amount.
