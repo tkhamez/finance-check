@@ -9,7 +9,7 @@ import requests
 class FetchWallet:
 
     def __init__(self):
-        self.__base_url = os.getenv('API_BASE_URL') + '/api/app/v1/esi/latest'
+        self.__base_url = os.getenv('API_BASE_URL') + '/api/app/v2/esi/latest'
         self.__auth_header = {'Authorization': 'Bearer ' + os.getenv('API_KEY')}
         self.__login_name = os.getenv('API_EVE_LOGIN')
         self.__db = mysql.connector.connect(
