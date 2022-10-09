@@ -12,6 +12,8 @@ class Tokens:
 
     __have_corporations = []
 
+    __want_corporations = []
+
     __available_tokens = []
 
     def __init__(self, app: Flask):
@@ -35,13 +37,13 @@ class Tokens:
         if 'character_id' not in session:
             return redirect(url_for('auth_login'))
 
-        want_corporations = self.__fetch_alliance_corporations()
+        self.__want_corporations = self.__fetch_alliance_corporations()
         if self.__check_corporations:
-            want_corporations[0] = [int(x) for x in self.__check_corporations.split(',')]
+            self.__want_corporations[0] = [int(x) for x in self.__check_corporations.split(',')]
 
         all_corporation_ids = []
-        for alliance_id in want_corporations.keys():
-            all_corporation_ids = all_corporation_ids + want_corporations[alliance_id]
+        for alliance_id in self.__want_corporations.keys():
+            all_corporation_ids = all_corporation_ids + self.__want_corporations[alliance_id]
         self.__fetch_names(all_corporation_ids)
 
         cursor = self.__db.cursor(dictionary=True)
@@ -59,9 +61,10 @@ class Tokens:
         return render_template(
             'tokens.html',
             character_id=session['character_id'],
-            want_corporations=want_corporations,
+            want_corporations=self.__want_corporations,
             have_corporations=self.__have_corporations,
             find_have_corporation=self.__find_have_corporation,
+            __is_want_corporation=self.__is_want_corporation,
             find_available_tokens=self.__find_available_tokens,
             find_corporation_name=self.__find_corporation_name
         )
@@ -97,6 +100,13 @@ class Tokens:
         for corporation in self.__have_corporations:
             if corporation['id'] == corporation_id:
                 return corporation
+
+    def __is_want_corporation(self, corporation_id: int) -> bool:
+        for alliance_id in self.__want_corporations.keys():
+            for want_corporation_id in self.__want_corporations[alliance_id]:
+                if want_corporation_id == corporation_id:
+                    return True
+        return False
 
     def __find_available_tokens(self, corporation_id: int) -> list:
         tokens = []

@@ -5,7 +5,6 @@
 <div class="tokens">
 
     <h3>Corporation Overview</h3>
-
     <table class="list">
         {% for alliance_id in want_corporations %}
             <thead>
@@ -76,9 +75,7 @@
     </table>
 
     <br>
-
     <h3>Active, Missing Token</h3>
-
     <table class="list">
         <thead>
             <tr>
@@ -93,7 +90,41 @@
             {% if not tokens %}
                 <tbody>
                     <tr>
-                        <td>{{ corporation.id }}</td>
+                        <td>
+                            <a href="https://evewho.com/corporation/{{ corporation.id }}" target="_blank"
+                               rel="noopener noreferrer" title="EveWho">{{ corporation.id }}</a>
+                        </td>
+                        <td>{{ corporation.corporation_name }}</td>
+                        <td>
+                            <a href="https://evewho.com/character/{{ corporation.character_id }}" target="_blank"
+                               rel="noopener noreferrer" title="EveWho">{{ corporation.character_id }}</a>
+                        </td>
+                        <td>{% if corporation.last_journal_date %}{{ corporation.last_journal_date }}{% endif %}</td>
+                    </tr>
+                </tbody>
+            {% endif %}
+        {% endfor %}
+    </table>
+
+    <br>
+    <h3>Active, Don't Want</h3>
+    <table class="list">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Character ID</th>
+                <th>Last Journal Date</th>
+            </tr>
+        </thead>
+        {% for corporation in have_corporations if corporation.active %}
+            {% if not __is_want_corporation(corporation.id) %}
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="https://evewho.com/corporation/{{ corporation.id }}" target="_blank"
+                               rel="noopener noreferrer" title="EveWho">{{ corporation.id }}</a>
+                        </td>
                         <td>{{ corporation.corporation_name }}</td>
                         <td>
                             <a href="https://evewho.com/character/{{ corporation.character_id }}" target="_blank"
