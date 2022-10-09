@@ -45,9 +45,7 @@ class Tokens:
         self.__fetch_names(all_corporation_ids)
 
         cursor = self.__db.cursor(dictionary=True)
-        cursor.execute("SELECT id, corporation_name, character_id, last_journal_date, active "
-                       "FROM corporations "
-                       "ORDER BY corporation_name")
+        cursor.execute("SELECT id, corporation_name, character_id, last_journal_date, active FROM corporations")
         self.__have_corporations = cursor.fetchall()
         cursor.close()
 
@@ -62,6 +60,7 @@ class Tokens:
             'tokens.html',
             character_id=session['character_id'],
             want_corporations=want_corporations,
+            have_corporations=self.__have_corporations,
             find_have_corporation=self.__find_have_corporation,
             find_available_tokens=self.__find_available_tokens,
             find_corporation_name=self.__find_corporation_name
@@ -81,10 +80,10 @@ class Tokens:
         return want_alliance_corporations
 
     def __fetch_names(self, corporation_ids: []) -> None:
-        # self.__corporation_names = {
-        #    98024275: 'Rational Chaos Inc.', 98112599: 'Black Queen Enterprises', 98209548: 'Brave Little Toaster.',
-        #    98645283: 'Brave United Holding', 98599810: 'Brave Nubs'}
-        # return
+        """self.__corporation_names = {
+           98024275: 'Rational Chaos Inc.', 98112599: 'Black Queen Enterprises', 98209548: 'Brave Little Toaster.',
+           98645283: 'Brave United Holding', 98599810: 'Brave Nubs'}
+        return"""
         url = '{}/universe/names/'.format(self.__esi_base_url)
         response = requests.post(url, json=corporation_ids)  # Note: corporation_ids cannot have more than 1000 items
         if response.status_code == 200:

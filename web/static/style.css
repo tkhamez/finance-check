@@ -32,7 +32,8 @@ a {
     display: inline-block;
 }
 
-.tokens table {
+.tokens table th {
+    text-align: left;
 }
 
 table.list {
