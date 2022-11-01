@@ -86,8 +86,7 @@
             </tr>
         </thead>
         {% for corporation in have_corporations if corporation.active %}
-            {% set tokens = find_available_tokens(corporation.id) %}
-            {% if not tokens %}
+            {% if not has_token(corporation.id, corporation.character_id) %}
                 <tbody>
                     <tr>
                         <td>
@@ -118,7 +117,7 @@
             </tr>
         </thead>
         {% for corporation in have_corporations if corporation.active %}
-            {% if not __is_want_corporation(corporation.id) %}
+            {% if not is_want_corporation(corporation.id) %}
                 <tbody>
                     <tr>
                         <td>

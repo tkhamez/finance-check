@@ -64,8 +64,9 @@ class Tokens:
             want_corporations=self.__want_corporations,
             have_corporations=self.__have_corporations,
             find_have_corporation=self.__find_have_corporation,
-            __is_want_corporation=self.__is_want_corporation,
+            is_want_corporation=self.__is_want_corporation,
             find_available_tokens=self.__find_available_tokens,
+            has_token=self.__has_token,
             find_corporation_name=self.__find_corporation_name
         )
 
@@ -114,6 +115,12 @@ class Tokens:
             if token['corporationId'] == corporation_id:
                 tokens.append(token)
         return tokens
+
+    def __has_token(self, corporation_id: int, character_id: int) -> bool:
+        for token in self.__available_tokens:
+            if token['corporationId'] == corporation_id and token['characterId'] == character_id:
+                return True
+        return False
 
     def __find_corporation_name(self, corporation_id: int) -> str:
         if corporation_id in self.__corporation_names:
