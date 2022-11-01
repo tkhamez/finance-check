@@ -33,14 +33,22 @@
                     Corporation:
                     <select name="corporation">
                         <option></option>
-                        {% for corporation in corporations %}
-                            <option value="{{ corporation.id }}"
-                                    {% if params.corporation == corporation.id %}selected{% endif %}>
-                                {{ corporation.corporation_name }}
-                                &nbsp; - &nbsp;
-                                {{ corporation.last_journal_date }}
-                            </option>
-                        {% endfor %}
+                        <optgroup label="Active">
+                            {% for corporation in corporations_active %}
+                                <option value="{{ corporation.id }}"
+                                        {% if params.corporation == corporation.id %}selected{% endif %}>
+                                    {{ corporation.corporation_name }}
+                                </option>
+                            {% endfor %}
+                        </optgroup>
+                        <optgroup label="Inactive">
+                            {% for corporation in corporations_inactive %}
+                                <option value="{{ corporation.id }}"
+                                        {% if params.corporation == corporation.id %}selected{% endif %}>
+                                    {{ corporation.corporation_name }}
+                                </option>
+                            {% endfor %}
+                        </optgroup>
                     </select>
                 </label>
             </div>

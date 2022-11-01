@@ -116,7 +116,10 @@ class Index:
         cursor = self.__db.cursor(dictionary=True)
         cursor.execute("SELECT id, corporation_name, last_journal_date FROM corporations "
                        "WHERE active = 1 ORDER BY corporation_name")
-        corporations = cursor.fetchall()
+        corporations_active = cursor.fetchall()
+        cursor.execute("SELECT id, corporation_name, last_journal_date FROM corporations "
+                       "WHERE active = 0 ORDER BY corporation_name")
+        corporations_inactive = cursor.fetchall()
         cursor.close()
 
         self.__db.close()
@@ -136,9 +139,11 @@ class Index:
                 headers={'Content-disposition': 'attachment; filename=' + filename + '.csv'}
             )
         else:
-            return render_template('index.html', character_id=session['character_id'], current_year=current_year,
-                                   params=query_params, corporations=corporations, journal=journal,
-                                   sum_amount_in=sum_amount_in, sum_amount_out=sum_amount_out)
+            return render_template(
+                'index.html', character_id=session['character_id'], current_year=current_year, params=query_params,
+                corporations_active=corporations_active, corporations_inactive=corporations_inactive,
+                journal=journal, sum_amount_in=sum_amount_in, sum_amount_out=sum_amount_out
+            )
 
     def __fetch_details(self, corporation: int, date_from: datetime, date_to: datetime, types: [],
                         types_placeholder: []) -> []:
