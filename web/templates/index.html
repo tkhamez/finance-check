@@ -54,7 +54,13 @@
             </div>
 
             <div class="column">
-                Types:<br>
+                Types:
+                <label>
+                    {% if params.type_all == '1' %} {% set checked_all = 'checked' %} {% endif %}
+                    <input name="type_all" type="checkbox" value="1" {{ checked_all }}>
+                    all
+                </label>
+                <br>
                 <label>
                     {% if params.type_bounty == '1' %} {% set checked_bounty = 'checked' %} {% endif %}
                     <input name="type_bounty" type="checkbox" value="1" {{ checked_bounty }}>

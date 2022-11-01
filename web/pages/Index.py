@@ -31,6 +31,7 @@ class Index:
             'corporation': self.__int(request.args.get('corporation', 0)),
             'year': self.__int(request.args.get('year', current_year)),
             'month': self.__int(request.args.get('month', datetime.datetime.now().month)),
+            'type_all': request.args.get('type_all', '0'),
             'type_bounty': request.args.get('type_bounty', '0'),
             'type_ess_escrow': request.args.get('type_ess_escrow', '0'),
             'type_mission_reward': request.args.get('type_mission_reward', '0'),
@@ -98,11 +99,14 @@ class Index:
 
         journal = []
         if query_params['mode'] == 'details':
-            journal = self.__fetch_details(query_params['corporation'], date_from, date_to, types, types_placeholder)
+            journal = self.__fetch_details(query_params['corporation'], date_from, date_to, types, types_placeholder,
+                                           query_params['type_all'])
         elif query_params['mode'] == 'sum_months':
-            journal = self.__fetch_sum_months(query_params['corporation'], types, types_placeholder)
+            journal = self.__fetch_sum_months(query_params['corporation'], types, types_placeholder,
+                                              query_params['type_all'])
         elif query_params['mode'] == 'sum_corporations':
-            journal = self.__fetch_sum_corporations(date_from, date_to, types, types_placeholder)
+            journal = self.__fetch_sum_corporations(date_from, date_to, types, types_placeholder,
+                                                    query_params['type_all'])
 
         sum_amount_in = 0
         sum_amount_out = 0
@@ -146,52 +150,63 @@ class Index:
             )
 
     def __fetch_details(self, corporation: int, date_from: datetime, date_to: datetime, types: [],
-                        types_placeholder: []) -> []:
+                        types_placeholder: [], type_all: str) -> []:
         journal = []
-        if len(types) > 0:
+        if len(types) > 0 or type_all == '1':
             cursor = self.__db.cursor(dictionary=True)
-            cursor.execute("SELECT ref_type, journal_date, description, reason, "
-                           "    CASE WHEN amount >= 0 THEN amount END AS amount_in, "
-                           "    CASE WHEN amount < 0 THEN amount END AS amount_out "
-                           "FROM wallet_journal "
-                           "WHERE corporation_id = %s AND journal_date BETWEEN %s AND %s AND ref_type IN ({}) "
-                           "ORDER BY journal_date DESC".format(', '.join(types_placeholder)),
-                           [corporation, date_from.strftime('%Y-%m-%d %H:%M:%S'),
-                            date_to.strftime('%Y-%m-%d %H:%M:%S')] + types)
+            sql = "SELECT ref_type, journal_date, description, reason, " \
+                  "CASE WHEN amount >= 0 THEN amount END AS amount_in, " \
+                  "CASE WHEN amount < 0 THEN amount END AS amount_out " \
+                  "FROM wallet_journal " \
+                  "WHERE corporation_id = %s AND journal_date BETWEEN %s AND %s "
+            params = [corporation, date_from.strftime('%Y-%m-%d %H:%M:%S'), date_to.strftime('%Y-%m-%d %H:%M:%S')]
+            if type_all != '1':
+                sql += "AND ref_type IN ({}) ".format(', '.join(types_placeholder))
+                params += types
+            sql += "ORDER BY journal_date DESC"
+            cursor.execute(sql, params)
             journal = cursor.fetchall()
             cursor.close()
         return journal
 
-    def __fetch_sum_months(self, corporation: int, types: [], types_placeholder: []) -> []:
+    def __fetch_sum_months(self, corporation: int, types: [], types_placeholder: [], type_all: str) -> []:
         journal = []
-        if len(types) > 0:
+        if len(types) > 0 or type_all == '1':
             cursor = self.__db.cursor(dictionary=True)
-            cursor.execute("SELECT YEAR(journal_date) AS year, MONTH(journal_date) AS month, "
-                           "    SUM(CASE WHEN amount >= 0 THEN amount ELSE 0 END) AS amount_in, "
-                           "    SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS amount_out "
-                           "FROM wallet_journal "
-                           "WHERE corporation_id = %s AND ref_type IN ({}) "
-                           "GROUP BY YEAR(journal_date), MONTH(journal_date) "
-                           "ORDER BY YEAR(journal_date) DESC, MONTH(journal_date) DESC"
-                           .format(', '.join(types_placeholder)),
-                           [corporation] + types)
+            sql = "SELECT YEAR(journal_date) AS year, MONTH(journal_date) AS month, " \
+                  "    SUM(CASE WHEN amount >= 0 THEN amount ELSE 0 END) AS amount_in, " \
+                  "    SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS amount_out " \
+                  "FROM wallet_journal " \
+                  "WHERE corporation_id = %s "
+            params = [corporation]
+            if type_all != '1':
+                sql += "AND ref_type IN ({}) ".format(', '.join(types_placeholder))
+                params += types
+            sql += "GROUP BY YEAR(journal_date), MONTH(journal_date) " \
+                   "ORDER BY YEAR(journal_date) DESC, MONTH(journal_date) DESC"
+            cursor.execute(sql, params)
             journal = cursor.fetchall()
             cursor.close()
         return journal
 
-    def __fetch_sum_corporations(self, date_from: datetime, date_to: datetime, types: [], types_placeholder: []) -> []:
+    def __fetch_sum_corporations(self, date_from: datetime, date_to: datetime, types: [], types_placeholder: [],
+                                 type_all: str) -> []:
         journal = []
-        if len(types) > 0:
+        if len(types) > 0 or type_all == '1':
             cursor = self.__db.cursor(dictionary=True)
-            cursor.execute("SELECT w.corporation_id, c.corporation_name, "
-                           "    SUM(CASE WHEN w.amount >= 0 THEN w.amount ELSE 0 END) AS amount_in, "
-                           "    SUM(CASE WHEN w.amount < 0 THEN w.amount ELSE 0 END) AS amount_out "
-                           "FROM wallet_journal w "
-                           "LEFT JOIN corporations c ON w.corporation_id = c.id "
-                           "WHERE w.journal_date BETWEEN %s AND %s AND w.ref_type IN ({}) "
-                           "GROUP BY w.corporation_id, c.corporation_name "
-                           "ORDER BY c.corporation_name".format(', '.join(types_placeholder)),
-                           [date_from.strftime('%Y-%m-%d %H:%M:%S'), date_to.strftime('%Y-%m-%d %H:%M:%S')] + types)
+            sql = "SELECT w.corporation_id, c.corporation_name, " \
+                  "    SUM(CASE WHEN w.amount >= 0 THEN w.amount ELSE 0 END) AS amount_in, " \
+                  "    SUM(CASE WHEN w.amount < 0 THEN w.amount ELSE 0 END) AS amount_out " \
+                  "FROM wallet_journal w " \
+                  "LEFT JOIN corporations c ON w.corporation_id = c.id " \
+                  "WHERE w.journal_date BETWEEN %s AND %s "
+            params = [date_from.strftime('%Y-%m-%d %H:%M:%S'), date_to.strftime('%Y-%m-%d %H:%M:%S')]
+            if type_all != '1':
+                sql += "AND w.ref_type IN ({}) ".format(', '.join(types_placeholder))
+                params += types
+            sql += "GROUP BY w.corporation_id, c.corporation_name " \
+                   "ORDER BY c.corporation_name"
+            cursor.execute(sql, params)
             journal = cursor.fetchall()
             cursor.close()
         return journal

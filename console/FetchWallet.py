@@ -19,6 +19,7 @@ class FetchWallet:
             password=os.getenv('DB_PASSWORD'),
             database=os.getenv('DB_DATABASE'),
         )
+        self.__all_types_corporations = os.getenv('ALL_TYPES_CORPORATIONS')
 
     def run(self):
         self.__read_wallets()
@@ -73,7 +74,8 @@ class FetchWallet:
         last_journal_date = ''
         for entry in json:
             # see also https://github.com/esi/eve-glue/blob/master/eve_glue/wallet_journal_ref.py
-            if entry['ref_type'] not in [
+            if corporation_id not in [int(x) for x in self.__all_types_corporations.split(',')] and \
+               entry['ref_type'] not in [
                     'bounty_prizes', 'ess_escrow_transfer',
                     'agent_mission_reward', 'agent_mission_time_bonus_reward', 'corporate_reward_payout',
                     'brokers_fee', 'jump_clone_activation_fee', 'jump_clone_installation_fee',

@@ -24,6 +24,7 @@ a {
 
 .index table {
 }
+.index th.number,
 .index td.number {
     text-align: right;
 }
