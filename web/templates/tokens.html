@@ -9,7 +9,7 @@
         {% for alliance_id in want_corporations %}
             <thead>
                 <tr>
-                    <th colspan="8">
+                    <th colspan="9">
                         {% if loop.index > 1 %}<br>{% endif %}
                         <h4>
                             {% if alliance_id %}
@@ -26,6 +26,7 @@
                     <th colspan="2">WANT</th>
                     <th colspan="3">HAVE</th>
                     <th colspan="3">AVAILABLE (valid tokens only)</th>
+                    <th>Match</th>
                 </tr>
                 <tr>
                     <td>ID</td>
@@ -38,6 +39,8 @@
                     <td>Character ID</td>
                     <td>Character Name</td>
                     <td>Last Checked</td>
+
+                    <td title="HAVE character ID matches one of the AVAILABLE IDs">*</td>
                 </tr>
             </thead>
             <tbody>
@@ -52,11 +55,13 @@
                         <td>{{ find_corporation_name(corporation_id) }}</td>
 
                         <td>
-                            <a href="https://evewho.com/character/{{ corporation.character_id }}" target="_blank"
-                               rel="noopener noreferrer" title="EveWho">{{ corporation.character_id }}</a>
+                            {% if corporation.character_id %}
+                                <a href="https://evewho.com/character/{{ corporation.character_id }}" target="_blank"
+                                   rel="noopener noreferrer" title="EveWho">{{ corporation.character_id }}</a>
+                            {% endif %}
                         </td>
                         <td>{% if corporation.last_journal_date %}{{ corporation.last_journal_date }}{% endif %}</td>
-                        <td>{{ corporation.active }}</td>
+                        <td>{% if corporation.active %}Yes{% elif corporation.character_id %}No{% endif %}</td>
 
                         <td>{% for token in tokens %}{{ token.characterId }}<br>{% endfor %}</td>
                         <td>{% for token in tokens %}{{ token.characterName }}<br>{% endfor %}</td>
@@ -66,6 +71,16 @@
                                     {{ token.lastChecked.replace('T', ' ').replace('Z', '') }}
                                 {% endif %}
                                 <br>
+                            {% endfor %}
+                        </td>
+
+                        <td>
+                            {% for token in tokens %}
+                                {% if corporation.character_id == token.characterId %}
+                                    Yes<br>
+                                {% else %}
+                                    <br>
+                                {% endif %}
                             {% endfor %}
                         </td>
                     </tr>
