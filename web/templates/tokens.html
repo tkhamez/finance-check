@@ -24,7 +24,7 @@
                 </tr>
                 <tr>
                     <th colspan="2">WANT</th>
-                    <th colspan="3">HAVE</th>
+                    <th colspan="3">CONFIGURED</th>
                     <th colspan="3">AVAILABLE (valid tokens only)</th>
                     <th>Match</th>
                 </tr>
@@ -40,12 +40,12 @@
                     <td>Character Name</td>
                     <td>Last Checked</td>
 
-                    <td title="HAVE character ID matches one of the AVAILABLE IDs">*</td>
+                    <td title="CONFIGURED character ID matches one of the AVAILABLE IDs">*</td>
                 </tr>
             </thead>
             <tbody>
                 {% for corporation_id in want_corporations[alliance_id] %}
-                    {% set corporation = find_have_corporation(corporation_id) %}
+                    {% set corporation = find_configured_corporation(corporation_id) %}
                     {% set tokens = find_available_tokens(corporation_id) %}
                     <tr>
                         <td>
@@ -100,7 +100,7 @@
                 <th>Last Journal Date</th>
             </tr>
         </thead>
-        {% for corporation in have_corporations if corporation.active %}
+        {% for corporation in configured_corporations if corporation.active %}
             {% if not has_token(corporation.id, corporation.character_id) %}
                 <tbody>
                     <tr>
@@ -131,7 +131,7 @@
                 <th>Last Journal Date</th>
             </tr>
         </thead>
-        {% for corporation in have_corporations if corporation.active %}
+        {% for corporation in configured_corporations if corporation.active %}
             {% if not is_want_corporation(corporation.id) %}
                 <tbody>
                     <tr>

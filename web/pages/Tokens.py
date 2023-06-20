@@ -10,7 +10,7 @@ from werkzeug.utils import redirect
 class Tokens:
     __corporation_names = {}
 
-    __have_corporations = []
+    __configured_corporations = []
 
     __want_corporations = []
 
@@ -48,7 +48,7 @@ class Tokens:
 
         cursor = self.__db.cursor(dictionary=True)
         cursor.execute("SELECT id, corporation_name, character_id, last_journal_date, active FROM corporations")
-        self.__have_corporations = cursor.fetchall()
+        self.__configured_corporations = cursor.fetchall()
         cursor.close()
 
         url = '{}/v1/esi/eve-login/{name}/token-data'.format(self.__core_base_url, name=self.__login_name)
@@ -62,8 +62,8 @@ class Tokens:
             'tokens.html',
             character_id=session['character_id'],
             want_corporations=self.__want_corporations,
-            have_corporations=self.__have_corporations,
-            find_have_corporation=self.__find_have_corporation,
+            configured_corporations=self.__configured_corporations,
+            find_configured_corporation=self.__find_configured_corporation,
             is_want_corporation=self.__is_want_corporation,
             find_available_tokens=self.__find_available_tokens,
             has_token=self.__has_token,
@@ -97,8 +97,8 @@ class Tokens:
         else:
             self.__app.logger.error(response.content)
 
-    def __find_have_corporation(self, corporation_id: int) -> Union[dict, None]:
-        for corporation in self.__have_corporations:
+    def __find_configured_corporation(self, corporation_id: int) -> Union[dict, None]:
+        for corporation in self.__configured_corporations:
             if corporation['id'] == corporation_id:
                 return corporation
 
