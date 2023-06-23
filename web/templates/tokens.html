@@ -89,14 +89,20 @@
                         <td>
                             {% for token in tokens %}
                                 {% if corporation.character_id == token.characterId %}
-                                    <br>
+                                    {% if not corporation.active %}
+                                        <form method="post" action="/tokens/activate">
+                                            <input type="hidden" name="corporation_id" value="{{ corporation_id }}">
+                                            <input type="submit" value="activate" onclick="showWaitBlock()">
+                                        </form>
+                                    {% else %}
+                                        <br>
+                                    {% endif %}
                                 {% else %}
                                     <form method="post" action="/tokens/add">
                                         <input type="hidden" name="corporation_id" value="{{ corporation_id }}">
                                         <input type="hidden" name="corporation_name" value="{{ corporation_name }}">
                                         <input type="hidden" name="character_id" value="{{ token.characterId }}">
                                         <input type="submit" value="Add" onclick="showWaitBlock()">
-                                        <br>
                                     </form>
                                 {% endif %}
                             {% endfor %}

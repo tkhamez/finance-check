@@ -86,10 +86,16 @@ class Tokens:
         return redirect(url_for('tokens'))
 
     def deactivate(self) -> Union[str, Response]:
+        return self.__update_active(0)
+
+    def activate(self) -> Union[str, Response]:
+        return self.__update_active(1)
+
+    def __update_active(self, active: int) -> Union[str, Response]:
         cursor = self.__db.cursor()
 
-        sql = "UPDATE corporations SET active = 0 WHERE id = %s"
-        data = [request.form.get('corporation_id')]
+        sql = "UPDATE corporations SET active = %s WHERE id = %s"
+        data = [active, request.form.get('corporation_id')]
         cursor.execute(sql, data)
         self.__db.commit()
 
