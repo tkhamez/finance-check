@@ -27,6 +27,11 @@ def tokens_add() -> Union[str, Response]:
     return Tokens(app).add()
 
 
+@app.route('/tokens/deactivate', methods=['POST'])
+def tokens_deactivate() -> Union[str, Response]:
+    return Tokens(app).deactivate()
+
+
 @app.route('/auth/login')
 def auth_login() -> str:
     return Auth.login()

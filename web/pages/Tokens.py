@@ -73,15 +73,25 @@ class Tokens:
     def add(self) -> Union[str, Response]:
         cursor = self.__db.cursor()
 
-        if request.form.get('action') == 'add':
-            sql = "INSERT INTO corporations " \
-                  "(id, corporation_name, character_id, active) " \
-                  "VALUES (%s, %s, %s, 1) " \
-                  "ON DUPLICATE KEY UPDATE character_id=%s, active=1"
-            data = (request.form.get('corporation_id'), request.form.get('corporation_name'),
-                    request.form.get('character_id'), request.form.get('character_id'))
-            cursor.execute(sql, data)
-            self.__db.commit()
+        sql = "INSERT INTO corporations " \
+              "(id, corporation_name, character_id, active) " \
+              "VALUES (%s, %s, %s, 1) " \
+              "ON DUPLICATE KEY UPDATE character_id = %s, active = 1"
+        data = [request.form.get('corporation_id'), request.form.get('corporation_name'),
+                request.form.get('character_id'), request.form.get('character_id')]
+        cursor.execute(sql, data)
+        self.__db.commit()
+
+        cursor.close()
+        return redirect(url_for('tokens'))
+
+    def deactivate(self) -> Union[str, Response]:
+        cursor = self.__db.cursor()
+
+        sql = "UPDATE corporations SET active = 0 WHERE id = %s"
+        data = [request.form.get('corporation_id')]
+        cursor.execute(sql, data)
+        self.__db.commit()
 
         cursor.close()
         return redirect(url_for('tokens'))
