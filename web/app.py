@@ -22,6 +22,11 @@ def tokens() -> Union[str, Response]:
     return Tokens(app).show()
 
 
+@app.route('/tokens/add', methods=['POST'])
+def tokens_add() -> Union[str, Response]:
+    return Tokens(app).add()
+
+
 @app.route('/auth/login')
 def auth_login() -> str:
     return Auth.login()

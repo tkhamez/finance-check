@@ -3,7 +3,7 @@ from typing import Union
 
 import mysql.connector
 import requests
-from flask import render_template, Response, url_for, session, Flask
+from flask import render_template, Response, url_for, session, Flask, request
 from werkzeug.utils import redirect
 
 
@@ -69,6 +69,22 @@ class Tokens:
             has_token=self.__has_token,
             find_corporation_name=self.__find_corporation_name
         )
+
+    def add(self) -> Union[str, Response]:
+        cursor = self.__db.cursor()
+
+        if request.form.get('action') == 'add':
+            sql = "INSERT INTO corporations " \
+                  "(id, corporation_name, character_id, active) " \
+                  "VALUES (%s, %s, %s, 1) " \
+                  "ON DUPLICATE KEY UPDATE character_id=%s, active=1"
+            data = (request.form.get('corporation_id'), request.form.get('corporation_name'),
+                    request.form.get('character_id'), request.form.get('character_id'))
+            cursor.execute(sql, data)
+            self.__db.commit()
+
+        cursor.close()
+        return redirect(url_for('tokens'))
 
     def __fetch_alliance_corporations(self) -> dict:
         # return {99003214: [98024275], 99010079: [98112599, 98209548]}

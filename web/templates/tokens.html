@@ -9,7 +9,7 @@
         {% for alliance_id in want_corporations %}
             <thead>
                 <tr>
-                    <th colspan="9">
+                    <th colspan="10">
                         {% if loop.index > 1 %}<br>{% endif %}
                         <h4>
                             {% if alliance_id %}
@@ -27,6 +27,7 @@
                     <th colspan="3">CONFIGURED</th>
                     <th colspan="3">AVAILABLE (valid tokens only)</th>
                     <th>Match</th>
+                    <th>Action</th>
                 </tr>
                 <tr>
                     <td>ID</td>
@@ -41,10 +42,12 @@
                     <td>Last Checked</td>
 
                     <td title="CONFIGURED character ID matches one of the AVAILABLE IDs">*</td>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
                 {% for corporation_id in want_corporations[alliance_id] %}
+                    {% set corporation_name = find_corporation_name(corporation_id) %}
                     {% set corporation = find_configured_corporation(corporation_id) %}
                     {% set tokens = find_available_tokens(corporation_id) %}
                     <tr>
@@ -52,7 +55,7 @@
                             <a href="https://evewho.com/corporation/{{ corporation_id }}" target="_blank"
                                rel="noopener noreferrer" title="EveWho">{{ corporation_id }}</a>
                         </td>
-                        <td>{{ find_corporation_name(corporation_id) }}</td>
+                        <td>{{ corporation_name }}</td>
 
                         <td>
                             {% if corporation.character_id %}
@@ -80,6 +83,22 @@
                                     Yes<br>
                                 {% else %}
                                     <br>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for token in tokens %}
+                                {% if corporation.character_id == token.characterId %}
+                                    <br>
+                                {% else %}
+                                    <form method="post" action="/tokens/add">
+                                        <input type="hidden" name="action" value="add">
+                                        <input type="hidden" name="corporation_id" value="{{ corporation_id }}">
+                                        <input type="hidden" name="corporation_name" value="{{ corporation_name }}">
+                                        <input type="hidden" name="character_id" value="{{ token.characterId }}">
+                                        <input type="submit" value="Add" onclick="showWaitBlock()">
+                                        <br>
+                                    </form>
                                 {% endif %}
                             {% endfor %}
                         </td>
