@@ -16,7 +16,6 @@ create table wallet_journal
 create index wallet_journal_corporation_id_index on wallet_journal (corporation_id);
 create index wallet_journal_date_index on wallet_journal (journal_date);
 create index wallet_journal_ref_type_index on wallet_journal (ref_type);
-create index wallet_journal_ref_amount_index on wallet_journal (amount);
 
 create table corporations
 (
@@ -27,3 +26,12 @@ create table corporations
     active            tinyint default 1 null,
     constraint corporations_id_unique   unique (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- 2022-07-07
+create index wallet_journal_ref_amount_index on wallet_journal (amount);
+
+-- 2023-06-23
+ALTER TABLE wallet_journal ADD journal_year_month INT unsigned NOT NULL after journal_date;
+CREATE index wallet_journal_year_month_index on wallet_journal (journal_year_month);
+UPDATE wallet_journal SET journal_year_month = (YEAR(journal_date) * 100) + MONTH(journal_date);

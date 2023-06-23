@@ -1,4 +1,3 @@
-import calendar
 import csv
 import datetime
 import io
@@ -92,21 +91,18 @@ class Index:
             types.append('project_discovery_reward')
             types_placeholder.append('%s')
 
-        # journal date range
-        date_from = datetime.datetime(query_params['year'], query_params['month'], 1)
-        weekday, last_day = calendar.monthrange(query_params['year'], query_params['month'])
-        date_to = datetime.datetime(query_params['year'], query_params['month'], last_day, 23, 59, 59)
+        # journal year and month
+        year_month = (query_params['year'] * 100) + query_params['month']
 
         journal = []
         if query_params['mode'] == 'details':
-            journal = self.__fetch_details(query_params['corporation'], date_from, date_to, types, types_placeholder,
+            journal = self.__fetch_details(query_params['corporation'], year_month, types, types_placeholder,
                                            query_params['type_all'])
         elif query_params['mode'] == 'sum_months':
-            journal = self.__fetch_sum_months(query_params['corporation'], types, types_placeholder,
+            journal = self.__fetch_sum_months(query_params['corporation'], year_month, types, types_placeholder,
                                               query_params['type_all'])
         elif query_params['mode'] == 'sum_corporations':
-            journal = self.__fetch_sum_corporations(date_from, date_to, types, types_placeholder,
-                                                    query_params['type_all'])
+            journal = self.__fetch_sum_corporations(year_month, types, types_placeholder, query_params['type_all'])
 
         sum_amount_in = 0
         sum_amount_out = 0
@@ -149,7 +145,7 @@ class Index:
                 journal=journal, sum_amount_in=sum_amount_in, sum_amount_out=sum_amount_out
             )
 
-    def __fetch_details(self, corporation: int, date_from: datetime, date_to: datetime, types: [],
+    def __fetch_details(self, corporation: int, year_month: int, types: [],
                         types_placeholder: [], type_all: str) -> []:
         journal = []
         if len(types) > 0 or type_all == '1':
@@ -158,8 +154,8 @@ class Index:
                   "CASE WHEN amount >= 0 THEN amount END AS amount_in, " \
                   "CASE WHEN amount < 0 THEN amount END AS amount_out " \
                   "FROM wallet_journal " \
-                  "WHERE corporation_id = %s AND journal_date BETWEEN %s AND %s "
-            params = [corporation, date_from.strftime('%Y-%m-%d %H:%M:%S'), date_to.strftime('%Y-%m-%d %H:%M:%S')]
+                  "WHERE corporation_id = %s AND journal_year_month = %s "
+            params = [corporation, year_month]
             if type_all != '1':
                 sql += "AND ref_type IN ({}) ".format(', '.join(types_placeholder))
                 params += types
@@ -169,28 +165,27 @@ class Index:
             cursor.close()
         return journal
 
-    def __fetch_sum_months(self, corporation: int, types: [], types_placeholder: [], type_all: str) -> []:
+    def __fetch_sum_months(self, corporation: int, year_month: int, types: [], types_placeholder: [], type_all: str) -> []:
         journal = []
         if len(types) > 0 or type_all == '1':
             cursor = self.__db.cursor(dictionary=True)
-            sql = "SELECT YEAR(journal_date) AS year, MONTH(journal_date) AS month, " \
+            sql = "SELECT journal_year_month, " \
                   "    SUM(CASE WHEN amount >= 0 THEN amount ELSE 0 END) AS amount_in, " \
                   "    SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS amount_out " \
                   "FROM wallet_journal " \
-                  "WHERE corporation_id = %s "
-            params = [corporation]
+                  "WHERE corporation_id = %s AND journal_year_month >= %s AND journal_year_month < %s "
+            params = [corporation, year_month, year_month+100]
             if type_all != '1':
                 sql += "AND ref_type IN ({}) ".format(', '.join(types_placeholder))
                 params += types
-            sql += "GROUP BY YEAR(journal_date), MONTH(journal_date) " \
-                   "ORDER BY YEAR(journal_date) DESC, MONTH(journal_date) DESC"
+            sql += "GROUP BY journal_year_month " \
+                   "ORDER BY journal_year_month DESC"
             cursor.execute(sql, params)
             journal = cursor.fetchall()
             cursor.close()
         return journal
 
-    def __fetch_sum_corporations(self, date_from: datetime, date_to: datetime, types: [], types_placeholder: [],
-                                 type_all: str) -> []:
+    def __fetch_sum_corporations(self, year_month: int, types: [], types_placeholder: [], type_all: str) -> []:
         journal = []
         if len(types) > 0 or type_all == '1':
             cursor = self.__db.cursor(dictionary=True)
@@ -199,8 +194,8 @@ class Index:
                   "    SUM(CASE WHEN w.amount < 0 THEN w.amount ELSE 0 END) AS amount_out " \
                   "FROM wallet_journal w " \
                   "LEFT JOIN corporations c ON w.corporation_id = c.id " \
-                  "WHERE w.journal_date BETWEEN %s AND %s "
-            params = [date_from.strftime('%Y-%m-%d %H:%M:%S'), date_to.strftime('%Y-%m-%d %H:%M:%S')]
+                  "WHERE w.journal_year_month = %s "
+            params = [year_month]
             if type_all != '1':
                 sql += "AND w.ref_type IN ({}) ".format(', '.join(types_placeholder))
                 params += types
@@ -223,9 +218,9 @@ class Index:
                                  entry['amount_out'], entry['reason']])
 
         if params['mode'] == 'sum_months':
-            writer.writerow(['year', 'month', 'amount in', 'amount out'])
+            writer.writerow(['year month', 'amount in', 'amount out'])
             for entry in journal:
-                writer.writerow([entry['year'], entry['month'], entry['amount_in'], entry['amount_out']])
+                writer.writerow([entry['journal_year_month'], entry['amount_in'], entry['amount_out']])
 
         if params['mode'] == 'sum_corporations':
             writer.writerow(['corporation', 'amount in', 'amount out'])

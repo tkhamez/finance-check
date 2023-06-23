@@ -214,13 +214,11 @@
         <table class="list">
             <thead>
                 <tr>
-                    <th>year</th>
-                    <th>month</th>
+                    <th>year month</th>
                     <th>amount in</th>
                     <th>amount out</th>
                 </tr>
                 <tr>
-                    <th></th>
                     <th></th>
                     <th class="number">{{ '{:,}'.format(sum_amount_in) }} </th>
                     <th class="number">{{ '{:,}'.format(sum_amount_out) }} </th>
@@ -229,8 +227,7 @@
             <tbody>
                 {% for entry in journal %}
                     <tr>
-                        <td>{{ entry.year }}</td>
-                        <td>{{ entry.month }}</td>
+                        <td>{{ entry.journal_year_month }}</td>
                         <td class="number">
                             {% if entry.amount_in %}{{ '{:,}'.format(entry.amount_in) }}{% endif %}
                         </td>

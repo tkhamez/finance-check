@@ -84,6 +84,9 @@ uwsgi --http 127.0.0.1:5000 --chdir web --module app:app
 
 ## Changes
 
+2023-06-23
+- Added wallet_journal.journal_year_month column, see [schema.sql](schema.sql).
+
 2022-11-01
 - Added ALL_TYPES_CORPORATIONS environment variable.
 
