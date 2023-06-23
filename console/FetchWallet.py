@@ -102,10 +102,10 @@ class FetchWallet:
                   "(id, corporation_id, ref_type, journal_date, description, " \
                   "amount, reason, first_party_id, second_party_id, context_id_type, context_id) " \
                   "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            data = (entry['id'], corporation_id, entry['ref_type'], journal_date, entry['description'],
+            data = [entry['id'], corporation_id, entry['ref_type'], journal_date, entry['description'],
                     entry.get('amount', None), entry.get('reason', None), entry.get('first_party_id', None),
                     entry.get('second_party_id', None), entry.get('context_id_type', None),
-                    entry.get('context_id', None))
+                    entry.get('context_id', None)]
             cursor.execute(sql, data)
         self.__db.commit()
         cursor.close()
