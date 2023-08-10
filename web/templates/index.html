@@ -18,7 +18,7 @@
                         </option>
                         {% if params.mode == 'sum_months' %} {% set selected_sum_months = 'selected' %} {% endif %}
                         <option value="sum_months" {{ selected_sum_months }}>
-                            Sum per month (one corporation)
+                            Sum per month (one corporation, max. 12 months)
                         </option>
                         {% if params.mode == 'sum_corporations' %}
                             {% set selected_sum_corporations = 'selected' %}
@@ -58,7 +58,7 @@
                 <label>
                     {% if params.type_all == '1' %} {% set checked_all = 'checked' %} {% endif %}
                     <input name="type_all" type="checkbox" value="1" {{ checked_all }}>
-                    all (includes more than listed below)
+                    all (if available, includes more than listed below)
                 </label>
                 <br>
                 <label>
@@ -137,7 +137,7 @@
 
             <div class="column">
                 <label>
-                    Year: &nbsp;&nbsp;
+                    Year: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <select name="year">
                         {% for year_option in range(2021, current_year+1) %}
                             <option value="{{ year_option }}" {% if params.year == year_option %}selected{% endif %}>
@@ -148,7 +148,7 @@
                 </label>
                 <br>
                 <label>
-                    Month:
+                    Month (start):
                     <select name="month">
                         {% for month_num, month_name in [(1, 'Jan.'), (2, 'Feb.'), (3, 'Mar.'), (4, 'Apr.'), (5, 'May'),
                                                          (6, 'June'), (7, 'July'), (8, 'Aug.'), (9, 'Sept.'), (10, 'Oct.'),
