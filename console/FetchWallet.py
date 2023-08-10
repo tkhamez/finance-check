@@ -97,12 +97,14 @@ class FetchWallet:
             if journal_date < first_journal_date:
                 first_journal_date = journal_date
 
+            year_month = (int(journal_date[0:4]) * 100) + int(journal_date[5:7])
+
             # Note: amount, balance and tax is double in json but bigint in database
             sql = "INSERT IGNORE INTO wallet_journal " \
-                  "(id, corporation_id, ref_type, journal_date, description, " \
+                  "(id, corporation_id, ref_type, journal_date, journal_year_month, description, " \
                   "amount, reason, first_party_id, second_party_id, context_id_type, context_id) " \
-                  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            data = [entry['id'], corporation_id, entry['ref_type'], journal_date, entry['description'],
+                  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            data = [entry['id'], corporation_id, entry['ref_type'], journal_date, year_month, entry['description'],
                     entry.get('amount', None), entry.get('reason', None), entry.get('first_party_id', None),
                     entry.get('second_party_id', None), entry.get('context_id_type', None),
                     entry.get('context_id', None)]
