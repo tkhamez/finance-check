@@ -1,6 +1,6 @@
-# finance-check
+# Finance Check
 
-Reads tax information from corporation wallets.
+An application for EVE Online to read tax related information from corporation wallets.
 
 ## Requirements
 
@@ -23,35 +23,6 @@ Add a Neucore app:
 
 Create a database and add the tables from `schema.sql`.
 
-Insert corporations those wallets should be read, e.g.:
-```sql
-INSERT INTO corporations (id, corporation_name, character_id) VALUES (98169165, 'BNI', 92888420);
-```
-The name does not matter, it's only used in the UI.  
-The character must have an ESI token on Neucore for the EVE login configured with the environment variable 
-API_EVE_LOGIN.
-
-Environment variables:
-- SECRET_KEY=a-secret-key # Used to encrypt the session cookie.
-- API_BASE_URL=https://account.bravecollective.com/api
-- API_KEY=123abc # base64 encoded id:secret
-- API_EVE_LOGIN=finance # The Neucore EVE login name with the "wallet" scope.
-- DB_HOST=127.0.0.1
-- DB_PORT=3306 # optional
-- DB_USER=finance_check
-- DB_PASSWORD=123abc
-- DB_DATABASE=finance_check
-- EVE_APP_ID=
-- EVE_APP_SECRET=
-- EVE_APP_CALLBACK=https://your-domain.tld/auth/callback
-- CHECK_ALLIANCES=99003214,99010079
-- CHECK_CORPORATIONS=98614261
-- ALL_TYPES_CORPORATIONS=98444656
-- LOGIN_CHARACTERS=96061222,98169165 # EVE character IDs that are allowed to log in
-- Optional for dev env if HTTPS is not available: OAUTHLIB_INSECURE_TRANSPORT=1
-
-## Run
-
 Install:
 ```
 sudo apt-get install python3-venv python3-dev
@@ -61,7 +32,34 @@ pip install wheel
 pip install -r requirements.txt
 ```
 
-Dev:
+Environment variables for the web application:
+- DB_HOST=127.0.0.1
+- DB_PORT=3306 # optional
+- DB_USER=finance_check
+- DB_PASSWORD=123abc
+- DB_DATABASE=finance_check
+- EVE_APP_ID=
+- EVE_APP_SECRET=
+- EVE_APP_CALLBACK=https://your-domain.tld/auth/callback
+- SECRET_KEY=a-secret-key # Used to encrypt the session cookie.
+- API_BASE_URL=https://account.bravecollective.com/api
+- API_KEY=123abc # base64 encoded id:secret
+- API_EVE_LOGIN=finance # The Neucore EVE login name with the "wallet" scope.
+- CHECK_ALLIANCES=99003214,99010079
+- CHECK_CORPORATIONS=98614261
+- ALL_TYPES_CORPORATIONS=98444656
+- LOGIN_CHARACTERS=96061222,98169165 # EVE character IDs that are allowed to log in
+- Optional for dev env if HTTPS is not available: OAUTHLIB_INSECURE_TRANSPORT=1
+
+Environment variables for the console application:
+- All DB_*
+- All API_*
+- ALL_TYPES_CORPORATIONS= # Optionally, a comma separated list of corporation IDs.
+
+## Run
+
+### Dev
+
 ```
 . venv/bin/activate
 
@@ -75,14 +73,23 @@ flask run
 python console/fetch-wallets.py
 ```
 
-Prod:  
+### Prod
+
 See files in `config/` for a setup with systemd and nginx on Ubuntu 20.04.  
 The server can also be temporarily started with:
 ```
+# export env vars
+
 uwsgi --http 127.0.0.1:5000 --chdir web --module app:app
 ```
 
+Set up a cronjob to run `python console/fetch-wallets.py` to fetch the data.
+
 ## Changes
+
+2023-08-10
+- Fixed missing year_month value in table wallet_journal. Run the last SQL in [schema.sql](schema.sql) from
+  2023-06-23 to add missing values.
 
 2023-06-23
 - Added wallet_journal.journal_year_month column, see [schema.sql](schema.sql).

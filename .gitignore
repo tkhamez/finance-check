@@ -3,6 +3,5 @@
 
 __pycache__
 
-/env.conf
 /env.sh
 /*.log
