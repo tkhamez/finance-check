@@ -1,5 +1,8 @@
 
 /venv
+/.venv
+/.venv8
+/.venv12
 
 __pycache__
 

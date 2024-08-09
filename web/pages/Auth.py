@@ -2,9 +2,7 @@ import os
 
 import requests
 from flask import render_template, session, redirect, url_for, Response, request
-# noinspection PyPackageRequirements
 from jose import jwt
-# noinspection PyPackageRequirements
 from jose.exceptions import JWTClaimsError
 from requests_oauthlib import OAuth2Session
 

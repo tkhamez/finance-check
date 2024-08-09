@@ -4,7 +4,7 @@ An application for EVE Online to read tax related information from corporation w
 
 ## Requirements
 
-- Python 3.8 (other versions may work, but are not tested)
+- Python 3.12 (other versions may work, but are not tested)
 - A MySQL or MariaDB database
 - A Neucore installation - https://github.com/tkhamez/neucore
 
@@ -23,13 +23,15 @@ Add a Neucore app:
 
 Create a database and add the tables from `schema.sql`.
 
-Install:
+Install (Ubuntu 22.04):
 ```
-sudo apt-get install python3-venv python3-dev
-python3 -m venv venv
-. venv/bin/activate
-pip install wheel
-pip install -r requirements.txt
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.12-venv python3.12-dev
+python3.12 -m venv .venv
+. .venv/bin/activate
+pip install pipenv
+pipenv install
 ```
 
 Environment variables for the web application:
@@ -61,7 +63,7 @@ Environment variables for the console application:
 ### Dev
 
 ```
-. venv/bin/activate
+. .venv/bin/activate
 
 export FLASK_ENV=development
 export FLASK_APP=web/app:app
@@ -86,6 +88,10 @@ uwsgi --http 127.0.0.1:5000 --chdir web --module app:app
 Set up a cronjob to run `python console/fetch-wallets.py` to fetch the data.
 
 ## Changes
+
+2024-08-09
+- Compatibility with Python 3.12.
+- Updated dependencies.
 
 2023-08-10
 - Fixed missing year_month value in table wallet_journal. Run the last SQL in [schema.sql](schema.sql) from
