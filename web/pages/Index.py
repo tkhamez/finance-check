@@ -36,6 +36,7 @@ class Index:
             'type_mission_reward': request.args.get('type_mission_reward', '0'),
             'type_corporate_reward': request.args.get('type_corporate_reward', '0'),
             'type_brokers_fee': request.args.get('type_brokers_fee', '0'),
+            'type_player_donation': request.args.get('type_player_donation', '0'),
             'type_jump_clone': request.args.get('type_jump_clone', '0'),
             'type_structure_gate_jump': request.args.get('type_structure_gate_jump', '0'),
             'type_reprocessing': request.args.get('type_reprocessing', '0'),
@@ -64,6 +65,9 @@ class Index:
             types_placeholder.append('%s')
         if query_params['type_brokers_fee'] == '1':
             types.append('brokers_fee')
+            types_placeholder.append('%s')
+        if query_params['type_player_donation'] == '1':
+            types.append('player_donation')
             types_placeholder.append('%s')
         if query_params['type_jump_clone'] == '1':
             types.append('jump_clone_activation_fee')

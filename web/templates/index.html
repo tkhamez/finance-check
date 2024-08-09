@@ -90,6 +90,11 @@
                     <input name="type_brokers_fee" type="checkbox" value="1" {{ checked_brokers_fee }}>
                     brokers fee
                 </label>
+                <label>
+                    {% if params.type_player_donation == '1' %} {% set checked_player_donation = 'checked' %} {% endif %}
+                    <input name="type_player_donation" type="checkbox" value="1" {{ checked_player_donation }}>
+                    player donation
+                </label>
                 <br>
                 <label>
                     {% if params.type_jump_clone == '1' %} {% set checked_jump_clone = 'checked' %} {% endif %}

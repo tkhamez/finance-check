@@ -78,14 +78,14 @@ class FetchWallet:
                entry['ref_type'] not in [
                     'bounty_prizes', 'ess_escrow_transfer',
                     'agent_mission_reward', 'agent_mission_time_bonus_reward', 'corporate_reward_payout',
-                    'brokers_fee', 'jump_clone_activation_fee', 'jump_clone_installation_fee',
-                    'structure_gate_jump',
+                    'brokers_fee', 'player_donation',
+                    'jump_clone_activation_fee', 'jump_clone_installation_fee', 'structure_gate_jump',
                     'reprocessing_tax', 'industry_job_tax',
                     'planetary_import_tax', 'planetary_export_tax',
                     'office_rental_fee', 'project_discovery_reward'
             ]:
                 """if entry['ref_type'] not in [
-                    'player_donation', 'medal_issued', 'infrastructure_hub_maintenance',
+                    'medal_issued', 'infrastructure_hub_maintenance',
                     'corporation_account_withdrawal', 'market_provider_tax',
                 ]:
                     print(entry['ref_type'] + ' ' + str(entry.get('amount', '')))"""

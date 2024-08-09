@@ -91,6 +91,7 @@ Set up a cronjob to run `python console/fetch-wallets.py` to fetch the data.
 
 2024-08-09
 - Compatibility with Python 3.12.
+- Player donations are now always stored and were added as a filter.
 - Updated dependencies.
 
 2023-08-10
