@@ -10,7 +10,7 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/opt/finance-check/web
 Environment="PATH=/opt/finance-check/venv/bin"
-ExecStart=/opt/finance-check/venv/bin/uwsgi --ini ../config/app.ini
+ExecStart=/opt/finance-check/.venv/bin/uwsgi --ini ../config/app.ini
 
 [Install]
 WantedBy=multi-user.target

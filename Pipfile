@@ -8,6 +8,7 @@ flask = "3.0.3"
 mysql-connector-python = "9.0.0"
 requests_oauthlib = "2.0.0"
 python-jose = "3.3.0"
+uwsgi = "2.0.26"
 
 [dev-packages]
 

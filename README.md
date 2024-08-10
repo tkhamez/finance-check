@@ -49,7 +49,6 @@ Environment variables for the web application:
 - API_EVE_LOGIN=finance # The Neucore EVE login name with the "wallet" scope.
 - CHECK_ALLIANCES=99003214,99010079
 - CHECK_CORPORATIONS=98614261
-- ALL_TYPES_CORPORATIONS=98444656
 - LOGIN_CHARACTERS=96061222,98169165 # EVE character IDs that are allowed to log in
 - Optional for dev env if HTTPS is not available: OAUTHLIB_INSECURE_TRANSPORT=1
 
@@ -82,7 +81,7 @@ The server can also be temporarily started with:
 ```
 # export env vars
 
-uwsgi --http 127.0.0.1:5000 --chdir web --module app:app
+.venv/bin/uwsgi --http 127.0.0.1:5000 --chdir web --module app:app
 ```
 
 Set up a cronjob to run `python console/fetch-wallets.py` to fetch the data.
