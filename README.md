@@ -23,11 +23,8 @@ Add a Neucore app:
 
 Create a database and add the tables from `schema.sql`.
 
-Install (Ubuntu 22.04):
+Install (Ubuntu 24.04):
 ```
-sudo add-apt-repository ppa:deadsnakes/ppa
-sudo apt-get update
-sudo apt-get install python3.12-venv python3.12-dev
 python3.12 -m venv .venv
 . .venv/bin/activate
 pip install pipenv
@@ -76,7 +73,7 @@ python console/fetch-wallets.py
 
 ### Prod
 
-See files in `config/` for a setup with systemd and nginx on Ubuntu 20.04.  
+See files in `config/` for a setup with systemd and nginx on Ubuntu 24.04.  
 The server can also be temporarily started with:
 ```
 # export env vars
